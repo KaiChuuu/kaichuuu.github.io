@@ -5,17 +5,18 @@ import type { Repo } from "@/context/ReposContext";
 import GitHubIcon from "@/assets/logos/github.svg?react";
 import RightArrowIcon from "@/assets/right-arrow.svg?react";
 
-interface ProjectSliderProps {
+import LogoMap from "@/data/LogoMap";
+
+interface ProjectSearchProps {
   title: string;
   data: Repo[];
 }
 
-function ProjectSlider({ title, data }: ProjectSliderProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+function ProjectSearch({ title, data }: ProjectSearchProps) {
   const [isFading, setIsFading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const maxCardsPerPage = 3;
+  const maxCardsPerPage = 6;
 
   const totalPages = Math.ceil(data.length / maxCardsPerPage);
   const startIndex = (currentPage - 1) * maxCardsPerPage;
@@ -25,7 +26,6 @@ function ProjectSlider({ title, data }: ProjectSliderProps) {
   const nextPage = () => {
     if (currentPage === totalPages) return;
     setIsFading(true);
-    setCurrentIndex(0);
     setTimeout(() => {
       setCurrentPage((page) => page + 1);
       setIsFading(false);
@@ -35,7 +35,6 @@ function ProjectSlider({ title, data }: ProjectSliderProps) {
   const prevPage = () => {
     if (currentPage === 1) return;
     setIsFading(true);
-    setCurrentIndex(0);
     setTimeout(() => {
       setCurrentPage((page) => page - 1);
       setIsFading(false);
@@ -47,37 +46,29 @@ function ProjectSlider({ title, data }: ProjectSliderProps) {
       <div className="bg-blue-black-gradient border p-4 rounded-t-2xl text-base-title text-white">
         {title}
       </div>
-      <div className="relative">
+      <div className="flex flex-col relative">
         <div
-          className={`flex gap-3 transition-opacity duration-500 ${
+          className={`grid grid-cols-3 gap-3 transition-opacity duration-500 ${
             isFading ? "opacity-0" : "opacity-100"
           }`}
         >
           {filteredData.map((repo, index) => {
-            const isActive = currentIndex === index;
-
             return (
               <div
                 key={index}
-                onMouseEnter={() => setCurrentIndex(index)}
-                className={`${
-                  isActive ? "w-1/2 scale-101 z-10" : "w-1/4 scale-100 z-0"
-                } transition-all duration-1000 ease-in-out
-                border border-gradient-blue
-                h-75 flex text-dark-blue bg-warm-white shadow-lg rounded-t-2xl rounded-br-2xl`}
+                className="transition-all duration-1000 ease-in-out hover:scale-105
+              h-75 flex flex-col text-dark-blue bg-white shadow-lg rounded-t-2xl rounded-br-2xl border border-gradient-blue"
               >
                 <a
                   href={repo.homepage || repo.html_url}
                   rel="noopener noreferrer"
                   target="_blank"
-                  className={`w-full overflow-hidden relative transition-all duration-1000 ${
-                    isActive ? "rounded-tl-2xl" : "rounded-t-2xl rounded-br-2xl"
-                  }`}
+                  className="h-3/4 w-full overflow-hidden rounded-t-2xl relative transition-all duration-1000"
                 >
                   <img
                     src={`https://raw.githubusercontent.com/KaiChuuu/${repo.name}/main/cover.jpg`}
                     alt={repo.name}
-                    className="w-full h-full object-cover transition-all duration-1000 hover:scale-105"
+                    className="w-full h-full object-cover transition-all duration-1000 rounded-t-xl"
                   />
 
                   {/* <div className="bg-dark-blue rounded-tr-2xl border-t border-r border-white-grey absolute px-6 py-1 bottom-0 left-0 text-white text-base-lg">
@@ -85,22 +76,17 @@ function ProjectSlider({ title, data }: ProjectSliderProps) {
                 </div> */}
                 </a>
 
-                <div
-                  className={`bg-white text-dark-blue shadow-lg rounded-r-2xl overflow-hidden transition-all duration-750 ease-in-out relative
-                ${isActive ? "w-1/2 opacity-100 p-4" : "w-0 opacity-0"}
-              `}
-                >
+                <div className="h-1/4 flex flex-col bg-white text-dark-blue p-2 shadow-lg rounded-r-2xl overflow-hidden transition-all duration-750 ease-in-out relative">
                   <h3 className="font-bold text-lg">{repo.name}</h3>
-                  <p className="text-sm mt-2">{repo.description}</p>
-
-                  <a
-                    href={repo.html_url}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    className="absolute bottom-0 right-0 p-4"
-                  >
-                    <GitHubIcon className="w-10 h-10 a-default" />
-                  </a>
+                  <div className="flex flex-wrap gap-2">
+                    {/* {repo.topics.map((topic, index) => (
+                      <div>
+                        <LogoMap name="cpp" />
+                      </div>
+                    ))} */}
+                    <LogoMap name="cpp" />
+                    <LogoMap name="csharp" />
+                  </div>
                 </div>
               </div>
             );
@@ -119,8 +105,21 @@ function ProjectSlider({ title, data }: ProjectSliderProps) {
           <RightArrowIcon className="w-15 h-15 bg-gradient-black rounded-full shadow-lg transition-all duration-500 hover:bg-pink hover:text-brown" />
         </div>
       </div>
+      <div className="flex justify-center gap-5">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <div
+            className={`${
+              index + 1 == currentPage
+                ? "bg-gradient-blue"
+                : "bg-gradient-black"
+            } rounded-full shadow-lg w-13 h-13 items-center justify-center flex transition-all duration-500`}
+          >
+            {index + 1}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-export default ProjectSlider;
+export default ProjectSearch;

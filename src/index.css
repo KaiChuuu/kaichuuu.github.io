@@ -13,6 +13,8 @@
   --color-white: #F5F5F5; /* bg */
   --color-warm-white: #EAEAEA; /* bg */
   --color-white-grey: #DCDCDC; /* sections */
+  --color-pink: #fbd3db;
+  --color-brown: #916b5b;
 }
 
 @theme {
@@ -84,7 +86,7 @@
 
 .a-default {
   color: var(--color-dark-blue);
-  transition: 0.2s;
+  transition: 0.5s;
   cursor: pointer;
 }
 

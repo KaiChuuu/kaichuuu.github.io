@@ -8,7 +8,33 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+/*
+Falling leaves and tree parts are from cherry-blossom tile map.
+
+Cherry blossom image by Freepik: 
+https://www.freepik.com/free-vector/japanese-cherry-blossom-vector-graphic_38612354.htm
+
+Used under Freepik’s Free License for personal projects. 
+All rights reserved to the original author.
+*/
+
 import { useEffect, useRef } from "react";
+
+import CherryBlossom from "@/assets/cherry-blossom.svg";
+import CherryBlossom2 from "@/assets/cherry-blossom-2.svg";
+
+const leafTypes = [
+  {
+    type: "cherry-blossom-1",
+    src: CherryBlossom,
+    className: "w-[850px] h-[835px]",
+  },
+  {
+    type: "cherry-blossom-2",
+    src: CherryBlossom2,
+    className: "w-[921px] h-[778px]",
+  },
+];
 
 type Leaf = {
   el: HTMLDivElement;
@@ -133,20 +159,20 @@ class LeafScene {
       this._resetLeaf(leaf);
       this.leaves.push(leaf);
 
-      // Tailwind classes for leaf shape
-      // leaf.el.className = "leaf w-4 h-4 bg-green-500 rounded-full absolute";
-      // this.world.appendChild(leaf.el);
+      const leafType = leafTypes[Math.floor(Math.random() * leafTypes.length)];
+
+      leaf.el.className = `absolute bg-no-repeat bg-cover ${leafType.className}`;
+      leaf.el.style.backgroundImage = `url(${leafType.src})`;
 
       // Leaf style with background image
-      leaf.el.className = "absolute w-5 h-5 bg-no-repeat bg-cover";
-      leaf.el.style.backgroundImage =
-        "url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/125707/leaf.svg')";
+      // leaf.el.className = "absolute w-5 h-5 bg-no-repeat bg-cover";
+      // leaf.el.style.backgroundImage = `url(${CherryBlossom})`;
       this.world.appendChild(leaf.el);
     }
 
     this.world.className = "leaf-scene absolute inset-0";
     this.viewport.appendChild(this.world);
-    this.world.style.perspective = "400px";
+    this.world.style.perspective = "800px";
 
     window.addEventListener("resize", () => {
       this.width = this.viewport.offsetWidth;

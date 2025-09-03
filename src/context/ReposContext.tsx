@@ -28,7 +28,7 @@ export const ReposProvider = ({ children }: { children: React.ReactNode }) => {
     fetch("https://api.github.com/users/KaiChuuu/repos")
       .then((res) => res.json())
       .then((data: Repo[]) => {
-        setRepos(data);
+        setRepos(data.filter((r) => r.topics.includes("project")));
         setLoading(false);
       });
   }, []);
