@@ -15,16 +15,33 @@
   --color-white-grey: #DCDCDC; /* sections */
   --color-pink: #fbd3db;
   --color-brown: #916b5b;
+  --color-ground: #cc9269;
+  --color-dark-grey: #94a3b8;
 }
 
 @theme {
   --color-gradient-blue: #396B82;
   --color-gradient-black: #0D1B2A;
+  --color-gradient-grey: #C9C9C9;
+  --color-gradient-grey-1: #f1f6f9;
+  --color-gradient-grey-2: #f8fafc;
 }
 
 @layer utilities {
   .bg-blue-black-gradient {
     @apply bg-gradient-to-r from-gradient-blue to-gradient-black;
+  }
+  .bg-vert-blue-black-gradient {
+    @apply bg-gradient-to-t from-gradient-black to-gradient-blue;
+  }
+  .bg-vert-black-white-gradient {
+    @apply bg-gradient-to-t from-black/80 to-transparent;
+  }
+  .bg-tr-grey-white-gradient {
+    @apply bg-gradient-to-tr from-gradient-grey/90 to-white;
+  }
+  .bg-vert-grey-grey-gradient {
+    @apply bg-gradient-to-t from-gradient-grey-1 to-gradient-grey-2;
   }
 }
 
@@ -125,4 +142,29 @@
   background-size: 100%;
   transform-style: preserve-3d;
   backface-visibility: visible;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-10px); }
+}
+
+.fade-in {
+  animation-name: fadeIn;
+  animation-duration: 500ms;
+  animation-fill-mode: both;
+  animation-timing-function: ease-in-out;
+  will-change: opacity, transform;
+}
+
+.fade-out {
+  animation-name: fadeOut;
+  animation-duration: 500ms;
+  animation-fill-mode: both;
+  animation-timing-function: ease-in-out;
 }

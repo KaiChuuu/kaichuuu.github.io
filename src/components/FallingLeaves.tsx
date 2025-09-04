@@ -17,6 +17,15 @@ https://www.freepik.com/free-vector/japanese-cherry-blossom-vector-graphic_38612
 Used under Freepik’s Free License for personal projects. 
 All rights reserved to the original author.
 */
+/*
+Grass floor tile map.
+
+Grass-to-dirt seamless ground cross-section by Freepik:
+https://www.freepik.com/free-vector/seamless-ground-grass-cross-sections-landscaping_188006625.htm
+
+Used under Freepik’s Free License for personal projects. 
+All rights reserved to the original author.
+*/
 
 import { useEffect, useRef } from "react";
 
