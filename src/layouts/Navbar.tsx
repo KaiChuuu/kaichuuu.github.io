@@ -14,7 +14,7 @@ function Navbar() {
               PORTFOLIO
             </a>
             <a className="a-default" href="#about">
-              ABOUT US
+              ABOUT ME
             </a>
           </div>
         </div>

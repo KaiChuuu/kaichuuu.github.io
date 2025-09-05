@@ -17,12 +17,13 @@
   --color-brown: #916b5b;
   --color-ground: #cc9269;
   --color-dark-grey: #94a3b8;
+  --color-interact-grey: #475569;
 }
 
 @theme {
   --color-gradient-blue: #396B82;
   --color-gradient-black: #0D1B2A;
-  --color-gradient-grey: #C9C9C9;
+  --color-gradient-grey: #e1e7ef;
   --color-gradient-grey-1: #f1f6f9;
   --color-gradient-grey-2: #f8fafc;
 }
@@ -32,13 +33,13 @@
     @apply bg-gradient-to-r from-gradient-blue to-gradient-black;
   }
   .bg-vert-blue-black-gradient {
-    @apply bg-gradient-to-t from-gradient-black to-gradient-blue;
+    @apply bg-gradient-to-t from-gradient-black to-gradient-blue/50;
   }
   .bg-vert-black-white-gradient {
     @apply bg-gradient-to-t from-black/80 to-transparent;
   }
   .bg-tr-grey-white-gradient {
-    @apply bg-gradient-to-tr from-gradient-grey/90 to-white;
+    @apply bg-gradient-to-tr from-gradient-grey to-white;
   }
   .bg-vert-grey-grey-gradient {
     @apply bg-gradient-to-t from-gradient-grey-1 to-gradient-grey-2;
@@ -51,6 +52,14 @@
   font-weight: 400;
   line-height: 28px;
   letter-spacing: 3px;
+}
+
+@utility text-base-normal-title {
+  font-family: var(--font-inter);
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: 0px;
 }
 
 @utility text-base-xl {

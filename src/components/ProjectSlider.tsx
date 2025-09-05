@@ -20,79 +20,79 @@ function ProjectSlider({ title, data }: ProjectSliderProps) {
   const totalPages = Math.ceil(data.length / maxCardsPerPage);
   const startIndex = (currentPage - 1) * maxCardsPerPage;
   const endIndex = startIndex + maxCardsPerPage;
-  const filteredData = data.slice(startIndex, endIndex);
+  const slicedData = data.slice(startIndex, endIndex);
 
   const nextPage = () => {
-    if (currentPage === totalPages) return;
+    if (currentPage === totalPages || isFading) return;
     setIsFading(true);
-    setCurrentIndex(0);
     setTimeout(() => {
       setCurrentPage((page) => page + 1);
+      setCurrentIndex(0);
       setIsFading(false);
-    }, 500);
+    }, 1500);
   };
 
   const prevPage = () => {
-    if (currentPage === 1) return;
+    if (currentPage === 1 || isFading) return;
     setIsFading(true);
-    setCurrentIndex(0);
     setTimeout(() => {
       setCurrentPage((page) => page - 1);
+      setCurrentIndex(0);
       setIsFading(false);
-    }, 500);
+    }, 1500);
   };
 
   return (
-    <div className="p-4 flex flex-col flex-wrap gap-10">
-      <div className="py-4 font-bold text-base-title bg-vert-blue-black-gradient bg-clip-text text-transparent">
+    <div className="flex flex-col flex-wrap gap-5">
+      <div className="py-4 font-bold text-base-normal-title bg-vert-blue-black-gradient bg-clip-text text-transparent">
         {title}
       </div>
-      <div className="relative">
-        <div
-          className={`flex gap-3 transition-opacity duration-500 ${
-            isFading ? "opacity-0" : "opacity-100"
-          }`}
-        >
-          {filteredData.map((repo, index) => {
-            const isActive = currentIndex === index;
 
-            return (
-              <div
-                key={index}
-                onMouseEnter={() => setCurrentIndex(index)}
-                className={`${
-                  isActive ? "w-1/2 scale-101 z-10" : "w-1/4 scale-100 z-0"
-                } transition-all duration-1000 ease-in-out
-                border border-gradient-blue
-                h-75 flex text-dark-blue bg-warm-white shadow-lg rounded-t-2xl rounded-br-2xl`}
+      <div className={`flex gap-3`}>
+        {slicedData.map((repo, index) => {
+          const isActive = currentIndex === index;
+
+          return (
+            <div
+              key={index}
+              onMouseEnter={() => setCurrentIndex(index)}
+              className={`duration-1000 ${
+                isActive ? "w-1/2 scale-105 z-10" : "w-1/4 scale-95 z-0"
+              } ${isFading ? "fade-out" : "fade-in"}
+                h-75 flex text-dark-blue shadow-lg`}
+              style={{
+                animationDelay: `${index * 250}ms`,
+              }}
+            >
+              <a
+                href={repo.homepage || repo.html_url || "#"}
+                rel="noopener noreferrer"
+                target="_blank"
+                className={`w-full overflow-hidden relative transition-all duration-1000`}
               >
-                <a
-                  href={repo.homepage || repo.html_url}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  className={`w-full overflow-hidden relative transition-all duration-1000 ${
-                    isActive ? "rounded-tl-2xl" : "rounded-t-2xl rounded-br-2xl"
-                  }`}
-                >
-                  <img
-                    src={`https://raw.githubusercontent.com/KaiChuuu/${repo.name}/main/cover.jpg`}
-                    alt={repo.name}
-                    className="w-full h-full object-cover transition-all duration-1000 hover:scale-105"
-                  />
+                <img
+                  src={`https://raw.githubusercontent.com/KaiChuuu/${repo.name}/main/cover.jpg`}
+                  alt={repo.name}
+                  className="w-full h-full object-cover transition-all duration-1000 hover:scale-105"
+                />
+              </a>
 
-                  {/* <div className="bg-dark-blue rounded-tr-2xl border-t border-r border-white-grey absolute px-6 py-1 bottom-0 left-0 text-white text-base-lg">
-                  {repo.name}
-                </div> */}
-                </a>
-
-                <div
-                  className={`bg-white text-dark-blue shadow-lg rounded-r-2xl overflow-hidden transition-all duration-750 ease-in-out relative
+              <div
+                className={`bg-tr-grey-white-gradient text-dark-blue shadow-lg overflow-hidden transition-all duration-750 ease-in-out relative
                 ${isActive ? "w-1/2 opacity-100 p-4" : "w-0 opacity-0"}
               `}
+              >
+                <a
+                  href={repo.homepage || repo.html_url || "#"}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  className="font-bold text-base-lg hover:underline hover:underline-offset-4"
                 >
-                  <h3 className="font-bold text-lg">{repo.name}</h3>
-                  <p className="text-sm mt-2">{repo.description}</p>
+                  {repo.name}
+                </a>
+                <p className="text-sm mt-2">{repo.description}</p>
 
+                {repo.html_url && (
                   <a
                     href={repo.html_url}
                     rel="noopener noreferrer"
@@ -101,24 +101,23 @@ function ProjectSlider({ title, data }: ProjectSliderProps) {
                   >
                     <GitHubIcon className="w-10 h-10 a-default" />
                   </a>
-                </div>
+                )}
               </div>
-            );
-          })}
-        </div>
-        <div
-          onClick={prevPage}
-          className="absolute left-0 top-1/2 -translate-y-1/2 text-white -translate-x-25"
-        >
-          <RightArrowIcon className="w-15 h-15 scale-x-[-1] bg-gradient-blue rounded-full shadow-lg " />
-        </div>
-        <div
-          onClick={nextPage}
-          className="absolute right-0 top-1/2 -translate-y-1/2 text-white translate-x-25"
-        >
-          <RightArrowIcon className="w-15 h-15 bg-gradient-black rounded-full shadow-lg transition-all duration-500 hover:bg-pink hover:text-brown" />
-        </div>
+            </div>
+          );
+        })}
       </div>
+
+      {data.length > maxCardsPerPage && (
+        <div className="flex justify-end gap-5 mt-4">
+          <div onClick={prevPage} className="text-white">
+            <RightArrowIcon className="w-12 h-12 scale-x-[-1] shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
+          </div>
+          <div onClick={nextPage} className="text-white">
+            <RightArrowIcon className="w-12 h-12 shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

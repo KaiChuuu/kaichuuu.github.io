@@ -4,6 +4,9 @@ import type { Repo } from "@/context/ReposContext";
 
 import RightArrowIcon from "@/assets/right-arrow.svg?react";
 import UpArrowIcon from "@/assets/up-arrow.svg?react";
+import Dropdown from "@/components/common/Dropdown";
+
+import { techStackGroup, languageGroup } from "@/data/TopicGroupings";
 
 interface ProjectSearchProps {
   title: string;
@@ -13,13 +16,33 @@ interface ProjectSearchProps {
 function ProjectSearch({ title, data }: ProjectSearchProps) {
   const [isFading, setIsFading] = useState(false);
 
+  const [techStack, setTechStack] = useState("");
+  const [language, setLanguage] = useState("");
+
   const [currentPage, setCurrentPage] = useState(1);
   const maxCardsPerPage = 9;
 
-  const totalPages = Math.ceil(data.length / maxCardsPerPage);
   const startIndex = (currentPage - 1) * maxCardsPerPage;
   const endIndex = startIndex + maxCardsPerPage;
-  const filteredData = data.slice(startIndex, endIndex);
+
+  const filteredData = data.filter((repo) => {
+    const matchesTechStack = !techStack || repo.topics?.includes(techStack);
+    const matchesLanguage = !language || repo.topics?.includes(language);
+
+    return matchesTechStack && matchesLanguage;
+  });
+  const totalPages = Math.ceil(filteredData.length / maxCardsPerPage);
+  const slicedData = filteredData.slice(startIndex, endIndex);
+
+  const updateTechStack = (value: string) => {
+    setTechStack(value);
+    setCurrentPage(1);
+  };
+
+  const updateLanguage = (value: string) => {
+    setLanguage(value);
+    setCurrentPage(1);
+  };
 
   const nextPage = () => {
     if (currentPage === totalPages || isFading) return;
@@ -39,25 +62,42 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
     }, 1500);
   };
 
+  console.log(filteredData.length, "????");
+
   return (
-    <div className="p-4 flex flex-col flex-wrap gap-10">
-      <div className="py-4 text-base-title bg-vert-blue-black-gradient bg-clip-text text-transparent">
-        {title}
+    <div className="flex flex-col flex-wrap gap-5">
+      <div className="flex items-center justify-between">
+        <div className="py-4 font-bold text-base-normal-title bg-vert-blue-black-gradient bg-clip-text text-transparent">
+          {title}
+        </div>
+        <div className="flex gap-5">
+          <Dropdown
+            name="Tech Stack"
+            options={techStackGroup}
+            onSelect={(value) => updateTechStack(value)}
+          />
+          <Dropdown
+            name="Language"
+            width="w-35"
+            options={languageGroup}
+            onSelect={(value) => updateLanguage(value)}
+          />
+        </div>
       </div>
       <div className="flex flex-col relative">
         <div className={`grid grid-cols-3 gap-3`}>
-          {filteredData.map((repo, index) => {
+          {slicedData.map((repo, index) => {
             return (
               <div
                 key={repo.id ?? `${currentPage}-${index}`}
-                className={`h-65 flex flex-col text-dark-blue bg-white shadow-lg relative
+                className={`h-65 flex flex-col text-dark-blue bg-white shadow-lg relative hover:scale-105
                   ${isFading ? "fade-out" : "fade-in"}`}
                 style={{
                   animationDelay: `${index * 150}ms`,
                 }}
               >
                 <a
-                  href={repo.homepage || repo.html_url}
+                  href={repo.homepage || repo.html_url || "#"}
                   rel="noopener noreferrer"
                   target="_blank"
                   className="w-full h-full overflow-hidden relative transition-all duration-1000"
@@ -73,7 +113,7 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
                   <div className="w-full">
                     <div className="flex w-full justify-between items-center">
                       <a
-                        href={repo.html_url}
+                        href={repo.html_url || "#"}
                         rel="noopener noreferrer"
                         target="_blank"
                         className="text-white text-base-lg font-bold hover:underline hover:underline-offset-4"
@@ -90,10 +130,12 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
 
                   <div className="w-full justify-between hidden transition-all duration-500 ease-in-out group-hover:block text-white">
                     <div className="flex gap-2">
-                      {repo.topics.map((topic, index) => (
+                      {repo.displayed_topics?.map((topic, index) => (
                         <div
                           key={index}
-                          className="bg-white text-dark-blue text-base-sm px-2 py-1 shadow-lg rounded-l-full rounded-r-full"
+                          className={`${
+                            index === 0 ? "bg-dark-grey" : "bg-white"
+                          } flex justify-center items-center text-dark-blue text-base-sm px-2 py-1 shadow-lg rounded-l-full rounded-r-full`}
                         >
                           {topic}
                         </div>
@@ -105,32 +147,26 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
             );
           })}
         </div>
-        <div
-          onClick={prevPage}
-          className="absolute left-0 top-1/2 -translate-y-1/2 text-white -translate-x-25"
-        >
-          <RightArrowIcon className="w-15 h-15 scale-x-[-1] bg-gradient-blue rounded-full shadow-lg " />
-        </div>
-        <div
-          onClick={nextPage}
-          className="absolute right-0 top-1/2 -translate-y-1/2 text-white translate-x-25"
-        >
-          <RightArrowIcon className="w-15 h-15 bg-gradient-black rounded-full shadow-lg transition-all duration-500 hover:bg-pink hover:text-brown" />
-        </div>
       </div>
-      <div className="flex justify-center gap-5">
-        {Array.from({ length: totalPages }, (_, index) => (
-          <div
-            className={`${
-              index + 1 == currentPage
-                ? "bg-gradient-blue"
-                : "bg-gradient-black"
-            } rounded-full shadow-lg w-13 h-13 items-center justify-center flex transition-all duration-500`}
-          >
-            {index + 1}
+      {filteredData.length > maxCardsPerPage && (
+        <div className="flex justify-end gap-5 mt-4">
+          <div onClick={prevPage} className="text-white">
+            <RightArrowIcon className="w-12 h-12 scale-x-[-1] shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
           </div>
-        ))}
-      </div>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <div
+              className={`${
+                index + 1 == currentPage ? "bg-pink text-brown" : "bg-dark-grey"
+              } shadow-lg w-12 h-12 text-base-lg items-center justify-center flex transition-all duration-500`}
+            >
+              {index + 1}
+            </div>
+          ))}
+          <div onClick={nextPage} className="text-white">
+            <RightArrowIcon className="w-12 h-12 shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
