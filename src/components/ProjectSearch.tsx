@@ -5,6 +5,7 @@ import type { Repo } from "@/context/ReposContext";
 import RightArrowIcon from "@/assets/right-arrow.svg?react";
 import UpArrowIcon from "@/assets/up-arrow.svg?react";
 import Dropdown from "@/components/common/Dropdown";
+import RepoCover from "@/components/common/RepoCover";
 
 import { techStackGroup, languageGroup } from "@/data/TopicGroupings";
 
@@ -16,6 +17,7 @@ interface ProjectSearchProps {
 function ProjectSearch({ title, data }: ProjectSearchProps) {
   const [isFading, setIsFading] = useState(false);
 
+  const [query, setQuery] = useState("");
   const [techStack, setTechStack] = useState("");
   const [language, setLanguage] = useState("");
 
@@ -29,7 +31,15 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
     const matchesTechStack = !techStack || repo.topics?.includes(techStack);
     const matchesLanguage = !language || repo.topics?.includes(language);
 
-    return matchesTechStack && matchesLanguage;
+    const searchLC = query.toLowerCase();
+    const matchesSearch =
+      !query ||
+      repo.topics?.some((topic) => {
+        return topic.toLowerCase().includes(searchLC);
+      }) ||
+      repo.name.toLowerCase().includes(searchLC);
+
+    return matchesTechStack && matchesLanguage && matchesSearch;
   });
   const totalPages = Math.ceil(filteredData.length / maxCardsPerPage);
   const slicedData = filteredData.slice(startIndex, endIndex);
@@ -40,6 +50,7 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
   };
 
   const updateLanguage = (value: string) => {
+    console.log(value, "<- LANGUAGE");
     setLanguage(value);
     setCurrentPage(1);
   };
@@ -49,6 +60,15 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
     setIsFading(true);
     setTimeout(() => {
       setCurrentPage((page) => page + 1);
+      setIsFading(false);
+    }, 1500);
+  };
+
+  const indexPage = (index: number) => {
+    if (index == currentPage || isFading) return;
+    setIsFading(true);
+    setTimeout(() => {
+      setCurrentPage(index);
       setIsFading(false);
     }, 1500);
   };
@@ -70,7 +90,14 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
         <div className="py-4 font-bold text-base-normal-title bg-vert-blue-black-gradient bg-clip-text text-transparent">
           {title}
         </div>
-        <div className="flex gap-5">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            placeholder="Search Projects or Tags..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="bg-interact-grey px-4 py-2 text-left shadow-lg flex justify-between items-center text-white text-base-md"
+          />
           <Dropdown
             name="Tech Stack"
             options={techStackGroup}
@@ -102,9 +129,8 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
                   target="_blank"
                   className="w-full h-full overflow-hidden relative transition-all duration-1000"
                 >
-                  <img
-                    src={`https://raw.githubusercontent.com/KaiChuuu/${repo.name}/main/cover.jpg`}
-                    alt={repo.name}
+                  <RepoCover
+                    repoName={repo.name}
                     className="w-full h-full object-cover transition-all duration-1000"
                   />
                 </a>
@@ -149,21 +175,27 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
         </div>
       </div>
       {filteredData.length > maxCardsPerPage && (
-        <div className="flex justify-end gap-5 mt-4">
+        <div className="flex justify-end gap-4 mt-4">
           <div onClick={prevPage} className="text-white">
-            <RightArrowIcon className="w-12 h-12 scale-x-[-1] shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
+            <RightArrowIcon className="w-10 h-10 scale-x-[-1] shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
           </div>
           {Array.from({ length: totalPages }, (_, index) => (
             <div
+              key={index}
+              onClick={() => {
+                indexPage(index + 1);
+              }}
               className={`${
-                index + 1 == currentPage ? "bg-pink text-brown" : "bg-dark-grey"
-              } shadow-lg w-12 h-12 text-base-lg items-center justify-center flex transition-all duration-500`}
+                index + 1 == currentPage
+                  ? "bg-pink text-brown"
+                  : "bg-dark-grey hover:bg-pink hover:text-brown"
+              } shadow-lg w-10 h-10 text-base-md items-center justify-center flex transition-all duration-500`}
             >
               {index + 1}
             </div>
           ))}
           <div onClick={nextPage} className="text-white">
-            <RightArrowIcon className="w-12 h-12 shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
+            <RightArrowIcon className="w-10 h-10 shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
           </div>
         </div>
       )}

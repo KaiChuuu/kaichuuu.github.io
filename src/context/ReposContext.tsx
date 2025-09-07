@@ -39,11 +39,11 @@ export const ReposProvider = ({ children }: { children: React.ReactNode }) => {
                 if (
                   techStackGroup.some((t) => t.toLowerCase() === lowerTopic)
                 ) {
-                  acc.unshift(topic);
+                  acc.unshift(lowerTopic);
                 } else if (
                   projectKeywords.some((k) => k.toLowerCase() === lowerTopic)
                 ) {
-                  acc.push(topic);
+                  acc.push(lowerTopic);
                 }
                 return acc;
               },
@@ -51,7 +51,12 @@ export const ReposProvider = ({ children }: { children: React.ReactNode }) => {
             );
 
             return { ...repo, displayed_topics };
-          });
+          })
+          .sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+          );
 
         setRepos(filtered);
       });

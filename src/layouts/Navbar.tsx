@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import GithubIcon from "@/assets/logos/github.svg?react";
 import LinkedInIcon from "@/assets/logos/linkedin.svg?react";
 import ItchIoIcon from "@/assets/logos/itch-io.svg?react";
@@ -10,10 +12,18 @@ function Navbar() {
           <div className="flex text-base-title font-bold">Kai Chu</div>
 
           <div className="flex gap-15 items-center text-base-lg text-dark-blue">
-            <a className="a-default" href="#portfolio">
+            <a
+              className="a-default"
+              href="#portfolio"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
               PORTFOLIO
             </a>
-            <a className="a-default" href="#about">
+            <a
+              className="a-default"
+              href="#about"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
               ABOUT ME
             </a>
           </div>

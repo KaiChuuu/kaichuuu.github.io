@@ -8,10 +8,18 @@ function Footer() {
       <div className="flex text-base-title font-bold">Kai Chu</div>
 
       <div className="mt-8 mb-3 flex gap-7 items-center text-base-lg text-dark-blue">
-        <a className="a-default" href="#portfolio">
+        <a
+          className="a-default"
+          href="#portfolio"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
           PORTFOLIO
         </a>
-        <a className="a-default" href="#about">
+        <a
+          className="a-default"
+          href="#about"
+          onClick={() => window.scrollTo({ top: 1, behavior: "smooth" })}
+        >
           ABOUT ME
         </a>
       </div>

@@ -10,7 +10,7 @@ function CertificationList() {
           rel="noopener noreferrer"
           target="_blank"
           key={index}
-          className="hover:scale-105 px-15 py-7 bg-tr-grey-white-gradient shadow-lg flex transition-all duration-500 text-black"
+          className="hover:scale-105 px-15 py-7 bg-tr-grey-white-gradient shadow-lg flex transition-all duration-500 text-dark-blue"
         >
           <div className="shadow-lg bg-dark-grey rounded-full p-4">
             <img className="w-35 h-36" src={badge.image}></img>

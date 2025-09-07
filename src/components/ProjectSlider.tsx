@@ -4,6 +4,7 @@ import type { Repo } from "@/context/ReposContext";
 
 import GitHubIcon from "@/assets/logos/github.svg?react";
 import RightArrowIcon from "@/assets/right-arrow.svg?react";
+import RepoCover from "@/components/common/RepoCover";
 
 interface ProjectSliderProps {
   title: string;
@@ -28,6 +29,15 @@ function ProjectSlider({ title, data }: ProjectSliderProps) {
     setTimeout(() => {
       setCurrentPage((page) => page + 1);
       setCurrentIndex(0);
+      setIsFading(false);
+    }, 1500);
+  };
+
+  const indexPage = (index: number) => {
+    if (index == currentPage || isFading) return;
+    setIsFading(true);
+    setTimeout(() => {
+      setCurrentPage(index);
       setIsFading(false);
     }, 1500);
   };
@@ -70,9 +80,8 @@ function ProjectSlider({ title, data }: ProjectSliderProps) {
                 target="_blank"
                 className={`w-full overflow-hidden relative transition-all duration-1000`}
               >
-                <img
-                  src={`https://raw.githubusercontent.com/KaiChuuu/${repo.name}/main/cover.jpg`}
-                  alt={repo.name}
+                <RepoCover
+                  repoName={repo.name}
                   className="w-full h-full object-cover transition-all duration-1000 hover:scale-105"
                 />
               </a>
@@ -109,12 +118,27 @@ function ProjectSlider({ title, data }: ProjectSliderProps) {
       </div>
 
       {data.length > maxCardsPerPage && (
-        <div className="flex justify-end gap-5 mt-4">
+        <div className="flex justify-end gap-4 mt-4">
           <div onClick={prevPage} className="text-white">
-            <RightArrowIcon className="w-12 h-12 scale-x-[-1] shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
+            <RightArrowIcon className="w-10 h-10 scale-x-[-1] shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
           </div>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <div
+              key={index}
+              onClick={() => {
+                indexPage(index + 1);
+              }}
+              className={`${
+                index + 1 == currentPage
+                  ? "bg-pink text-brown"
+                  : "bg-dark-grey hover:bg-pink hover:text-brown"
+              } shadow-lg w-10 h-10 text-base-md items-center justify-center flex transition-all duration-500`}
+            >
+              {index + 1}
+            </div>
+          ))}
           <div onClick={nextPage} className="text-white">
-            <RightArrowIcon className="w-12 h-12 shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
+            <RightArrowIcon className="w-10 h-10 shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
           </div>
         </div>
       )}

@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+
+import { specialMap } from "@/data/TopicGroupings";
 
 import UpArrowIcon from "@/assets/up-arrow.svg?react";
 
@@ -17,20 +19,37 @@ export default function Dropdown({
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleSelect = (value: string) => {
     setSelected(value);
-    onSelect(value.toLowerCase());
+    onSelect(specialMap[value] ? specialMap[value] : value.toLowerCase());
     setIsOpen(false);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className={`relative ${width}`}>
+    <div ref={dropdownRef} className={`text-white relative ${width}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full bg-interact-grey px-4 py-2 text-left shadow-lg flex justify-between items-center"
       >
-        <span>{selected || name}</span>
+        <span className="text-base-md text-white">{selected || name}</span>
         <div
           className={`flex items-center justify-center transition-transform ${
             isOpen ? "rotate-180" : ""
@@ -41,7 +60,7 @@ export default function Dropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute mt-1 w-full text-base-lg bg-dark-grey shadow-lg z-10">
+        <div className="absolute mt-1 w-full text-base-md bg-dark-grey shadow-lg z-10">
           <div
             key=""
             onClick={() => handleSelect("")}

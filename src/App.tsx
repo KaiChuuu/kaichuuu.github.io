@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import PortfolioPage from "./pages/PortfolioPage";
 import { ReposProvider } from "./context/ReposContext";
+
+import PortfolioPage from "./pages/PortfolioPage";
+import AboutMePage from "./pages/AboutMePage";
 
 function App() {
   const [page, setPage] = useState(
@@ -16,9 +18,8 @@ function App() {
 
   return (
     <ReposProvider>
-      {page === "home" && <h1>Home</h1>}
-      {page === "about" && <h1>About</h1>}
-      {page === "portfolio" && <PortfolioPage />}
+      {(page === "home" || page.startsWith("portfolio")) && <PortfolioPage />}
+      {page === "about" && <AboutMePage />}
     </ReposProvider>
   );
 }
