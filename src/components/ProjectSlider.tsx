@@ -60,6 +60,7 @@ function ProjectSlider({ title, data }: ProjectSliderProps) {
     setIsFading(true);
     setTimeout(() => {
       setCurrentPage(index);
+      setCurrentIndex(0);
       setIsFading(false);
     }, 1500);
   };
