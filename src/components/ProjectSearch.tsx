@@ -1,11 +1,11 @@
-import { useState } from "react";
-
+import { useState, useEffect, useRef } from "react";
 import type { Repo } from "@/context/ReposContext";
 
 import RightArrowIcon from "@/assets/right-arrow.svg?react";
 import UpArrowIcon from "@/assets/up-arrow.svg?react";
 import Dropdown from "@/components/common/Dropdown";
 import RepoCover from "@/components/common/RepoCover";
+import TopicsMarqueeToggle from "@/components/TopicsMarqueeToggle";
 
 import { techStackGroup, languageGroup } from "@/data/TopicGroupings";
 
@@ -22,7 +22,7 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
   const [language, setLanguage] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
-  const maxCardsPerPage = 9;
+  const [maxCardsPerPage, setMaxCardsPerPage] = useState(9);
 
   const startIndex = (currentPage - 1) * maxCardsPerPage;
   const endIndex = startIndex + maxCardsPerPage;
@@ -44,13 +44,32 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
   const totalPages = Math.ceil(filteredData.length / maxCardsPerPage);
   const slicedData = filteredData.slice(startIndex, endIndex);
 
+  const md = 768,
+    lg = 1024;
+
+  useEffect(() => {
+    const updateCardsPerPage = () => {
+      if (window.innerWidth < lg && window.innerWidth >= md) {
+        setMaxCardsPerPage(6);
+      } else if (window.innerWidth >= lg) {
+        setMaxCardsPerPage(9);
+      } else {
+        setMaxCardsPerPage(3);
+      }
+    };
+
+    updateCardsPerPage();
+    window.addEventListener("resize", updateCardsPerPage);
+
+    return () => window.removeEventListener("resize", updateCardsPerPage);
+  }, []);
+
   const updateTechStack = (value: string) => {
     setTechStack(value);
     setCurrentPage(1);
   };
 
   const updateLanguage = (value: string) => {
-    console.log(value, "<- LANGUAGE");
     setLanguage(value);
     setCurrentPage(1);
   };
@@ -82,21 +101,19 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
     }, 1500);
   };
 
-  console.log(filteredData.length, "????");
-
   return (
     <div className="flex flex-col flex-wrap gap-5">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
         <div className="py-4 font-bold text-base-normal-title bg-vert-blue-black-gradient bg-clip-text text-transparent">
           {title}
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-col lg:flex-row items-start sm:items-end lg:items-start gap-4">
           <input
             type="text"
             placeholder="Search Projects or Tags..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="bg-interact-grey px-4 py-2 text-left shadow-lg flex justify-between items-center text-white text-base-md"
+            className="bg-interact-grey px-4 py-2 text-left shadow-lg flex justify-between items-center text-white text-base-md max-w-[254px] w-full"
           />
           <Dropdown
             name="Tech Stack"
@@ -112,7 +129,7 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
         </div>
       </div>
       <div className="flex flex-col relative">
-        <div className={`grid grid-cols-3 gap-3`}>
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3`}>
           {slicedData.map((repo, index) => {
             return (
               <div
@@ -154,20 +171,7 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
                     </p>
                   </div>
 
-                  <div className="w-full justify-between hidden transition-all duration-500 ease-in-out group-hover:block text-white">
-                    <div className="flex gap-2">
-                      {repo.displayed_topics?.map((topic, index) => (
-                        <div
-                          key={index}
-                          className={`${
-                            index === 0 ? "bg-dark-grey" : "bg-white"
-                          } flex justify-center items-center text-dark-blue text-base-sm px-2 py-1 shadow-lg rounded-l-full rounded-r-full`}
-                        >
-                          {topic}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  <TopicsMarqueeToggle topics={repo.displayed_topics} />
                 </div>
               </div>
             );
@@ -179,21 +183,23 @@ function ProjectSearch({ title, data }: ProjectSearchProps) {
           <div onClick={prevPage} className="text-white">
             <RightArrowIcon className="w-10 h-10 scale-x-[-1] shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
           </div>
-          {Array.from({ length: totalPages }, (_, index) => (
-            <div
-              key={index}
-              onClick={() => {
-                indexPage(index + 1);
-              }}
-              className={`${
-                index + 1 == currentPage
-                  ? "bg-pink text-brown"
-                  : "bg-dark-grey hover:bg-pink hover:text-brown"
-              } shadow-lg w-10 h-10 text-base-md items-center justify-center flex transition-all duration-500`}
-            >
-              {index + 1}
-            </div>
-          ))}
+          <div className="hidden md:flex gap-4">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <div
+                key={index}
+                onClick={() => {
+                  indexPage(index + 1);
+                }}
+                className={`${
+                  index + 1 == currentPage
+                    ? "bg-pink text-brown"
+                    : "bg-dark-grey hover:bg-pink hover:text-brown"
+                } shadow-lg w-10 h-10 text-base-md items-center justify-center flex transition-all duration-500`}
+              >
+                {index + 1}
+              </div>
+            ))}
+          </div>
           <div onClick={nextPage} className="text-white">
             <RightArrowIcon className="w-10 h-10 shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
           </div>

@@ -8,10 +8,10 @@ function WorkExperience() {
         {workExperienceData.map(
           (company: WorkExperienceDataType, index: number) => (
             <div
-              className="h-40 flex justify-between p-5 px-10 py-7 bg-tr-grey-white-gradient shadow-lg hover:scale-102 transition-all duration-500"
+              className="h-auto lg:h-40 flex flex-col-reverse sm:flex-row justify-between p-5 px-10 py-7 bg-tr-grey-white-gradient shadow-lg hover:scale-102 transition-all duration-500"
               key={index}
             >
-              <div className="w-2/3 flex flex-col justify-center">
+              <div className="w-full sm:w-2/3 flex flex-col justify-center mt-5 sm:mt-0">
                 <div className="font-bold text-base-md">
                   {company.name} - {company.title}
                 </div>
@@ -22,7 +22,7 @@ function WorkExperience() {
 
                 <div className="mt-3 text-base-md">{company.description}</div>
               </div>
-              <div className="w-1/3 flex justify-end items-center">
+              <div className="w-full sm:w-1/3 flex justify-start sm:justify-end items-center">
                 <img className="w-25" src={company.logo} />
               </div>
             </div>

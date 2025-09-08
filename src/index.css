@@ -191,3 +191,28 @@ input:focus {
 .show-on-4k {
   display: none;
 }
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.marquee-track {
+  display: inline-flex;
+  gap: 8px;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marquee 16s linear infinite;
+}
+
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}

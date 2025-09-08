@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import type { Repo } from "@/context/ReposContext";
 
@@ -16,12 +16,34 @@ function ProjectSlider({ title, data }: ProjectSliderProps) {
   const [isFading, setIsFading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const maxCardsPerPage = 3;
+  const [maxCardsPerPage, setMaxCardsPerPage] = useState(3);
 
   const totalPages = Math.ceil(data.length / maxCardsPerPage);
   const startIndex = (currentPage - 1) * maxCardsPerPage;
   const endIndex = startIndex + maxCardsPerPage;
   const slicedData = data.slice(startIndex, endIndex);
+
+  const md = 768,
+    lg = 1024;
+
+  useEffect(() => {
+    const updateCardsPerPage = () => {
+      if (window.innerWidth < lg && window.innerWidth >= md) {
+        setMaxCardsPerPage(2);
+        if (currentIndex == 2) setCurrentIndex(0);
+      } else if (window.innerWidth >= lg) {
+        setMaxCardsPerPage(3);
+      } else {
+        setMaxCardsPerPage(1);
+        if (currentIndex >= 1) setCurrentIndex(0);
+      }
+    };
+
+    updateCardsPerPage();
+    window.addEventListener("resize", updateCardsPerPage);
+
+    return () => window.removeEventListener("resize", updateCardsPerPage);
+  }, [currentIndex]);
 
   const nextPage = () => {
     if (currentPage === totalPages || isFading) return;
@@ -58,16 +80,18 @@ function ProjectSlider({ title, data }: ProjectSliderProps) {
         {title}
       </div>
 
-      <div className={`flex gap-3`}>
+      <div className="flex gap-3">
         {slicedData.map((repo, index) => {
           const isActive = currentIndex === index;
 
           return (
             <div
-              key={index}
+              key={repo.id ?? `${currentPage}-${index}`}
               onMouseEnter={() => setCurrentIndex(index)}
               className={`duration-1000 ${
-                isActive ? "w-1/2 scale-105 z-10" : "w-1/4 scale-95 z-0"
+                isActive
+                  ? "w-full md:w-2/3 lg:w-1/2 scale-100 md:scale-105 z-10"
+                  : "md:w-1/3 lg:w-1/4 scale-95 z-0"
               } ${isFading ? "fade-out" : "fade-in"}
                 h-75 flex text-dark-blue shadow-lg`}
               style={{
@@ -122,21 +146,23 @@ function ProjectSlider({ title, data }: ProjectSliderProps) {
           <div onClick={prevPage} className="text-white">
             <RightArrowIcon className="w-10 h-10 scale-x-[-1] shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
           </div>
-          {Array.from({ length: totalPages }, (_, index) => (
-            <div
-              key={index}
-              onClick={() => {
-                indexPage(index + 1);
-              }}
-              className={`${
-                index + 1 == currentPage
-                  ? "bg-pink text-brown"
-                  : "bg-dark-grey hover:bg-pink hover:text-brown"
-              } shadow-lg w-10 h-10 text-base-md items-center justify-center flex transition-all duration-500`}
-            >
-              {index + 1}
-            </div>
-          ))}
+          <div className="hidden md:flex gap-4">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <div
+                key={index}
+                onClick={() => {
+                  indexPage(index + 1);
+                }}
+                className={`${
+                  index + 1 == currentPage
+                    ? "bg-pink text-brown"
+                    : "bg-dark-grey hover:bg-pink hover:text-brown"
+                } shadow-lg w-10 h-10 text-base-md items-center justify-center flex transition-all duration-500`}
+              >
+                {index + 1}
+              </div>
+            ))}
+          </div>
           <div onClick={nextPage} className="text-white">
             <RightArrowIcon className="w-10 h-10 shadow-lg transition-all duration-750 bg-interact-grey hover:bg-pink hover:text-brown" />
           </div>
