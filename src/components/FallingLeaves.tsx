@@ -70,7 +70,7 @@ class LeafScene {
       maxSpeed: 12,
       duration: 300,
       start: 0,
-      speed: (t: number, y: number) => 0,
+      speed: (_t: number, _y: number) => 0,
     },
   };
 

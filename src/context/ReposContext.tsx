@@ -24,7 +24,7 @@ const ReposContext = createContext<ReposContextType>({
 
 export const ReposProvider = ({ children }: { children: React.ReactNode }) => {
   const [repos, setRepos] = useState<Repo[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading] = useState(true);
 
   useEffect(() => {
     fetch("https://api.github.com/users/KaiChuuu/repos")

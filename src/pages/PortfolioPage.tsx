@@ -13,7 +13,7 @@ import CherryBlossomTree from "@/assets/cherry-blossom-tree.png";
 import CherryBlossomBranch from "@/assets/cherry-blossom-branch.png";
 
 function PortfolioPage() {
-  const { repos, loading } = useRepos();
+  const { repos } = useRepos();
 
   const activeWorkRepos = repos.filter((r) => r.homepage && r.homepage !== "");
 

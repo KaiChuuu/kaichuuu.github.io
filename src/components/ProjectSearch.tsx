@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import type { Repo } from "@/context/ReposContext";
 
 import RightArrowIcon from "@/assets/right-arrow.svg?react";

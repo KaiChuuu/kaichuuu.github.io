@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 import GithubIcon from "@/assets/logos/github.svg?react";
 import LinkedInIcon from "@/assets/logos/linkedin.svg?react";
 import ItchIoIcon from "@/assets/logos/itch-io.svg?react";
